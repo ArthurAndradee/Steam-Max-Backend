@@ -23,7 +23,7 @@ app.get('/movies/:category', async (req, res) => {
 
     try {
         let movies;
-        
+
         switch (category.toLowerCase()) {
             case 'sci-fi':
                 movies = await SciFi.find();
@@ -61,6 +61,38 @@ app.get('/movies/:category', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// server.js
+app.get('/movies', async (req, res) => {
+    try {
+        const sciFiMovies = await SciFi.find();
+        const actionMovies = await Action.find();
+        const dramaMovies = await Drama.find();
+        const animationMovies = await Animation.find();
+        const adventureMovies = await Adventure.find();
+        const crimeMovies = await Crime.find();
+        const fantasyMovies = await Fantasy.find();
+        const romanceMovies = await Romance.find();
+        const horrorMovies = await Horror.find();
+
+        const allMovies = [
+            ...sciFiMovies,
+            ...actionMovies,
+            ...dramaMovies,
+            ...animationMovies,
+            ...adventureMovies,
+            ...crimeMovies,
+            ...fantasyMovies,
+            ...romanceMovies,
+            ...horrorMovies
+        ];
+
+        res.json(allMovies);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
