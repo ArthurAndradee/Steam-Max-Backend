@@ -1,7 +1,5 @@
-// models/CategoryModel.js
 import mongoose from 'mongoose';
 
-// Define the movie schema
 const movieSchema = new mongoose.Schema({
     title: String,
     mainCast: [String],
@@ -9,12 +7,10 @@ const movieSchema = new mongoose.Schema({
     banner: String
 });
 
-// Function to create a model for a given category
 function createModel(category) {
     return mongoose.model(category, movieSchema, category);
 }
 
-// Create models for each category
 export const SciFi = createModel('SciFi');
 export const Action = createModel('Action');
 export const Drama = createModel('Drama');
