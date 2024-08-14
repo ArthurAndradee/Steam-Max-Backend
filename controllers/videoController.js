@@ -1,15 +1,34 @@
 import fs from 'fs';
+import path from 'path';
 
-const videoFileMap = {
-    'cdn': 'videos/cdn.mp4',
-    'generate-pass': 'videos/generate-pass.mp4',
-    'get-post': 'videos/get-post.mp4',
+const __dirname = path.resolve();
+
+const videosDir = path.join(__dirname, 'videos');
+
+const generateVideoFileMap = () => {
+    const videoFileMap = {};
+
+    const files = fs.readdirSync(videosDir);
+
+    files.forEach(file => {
+        if (file.endsWith('.mp4')) {
+            const key = path.basename(file, '.mp4');
+            videoFileMap[key] = path.join(videosDir, file);
+        }
+    });
+
+    return videoFileMap;
 };
+
+const videoFileMap = generateVideoFileMap();
 
 export const streamVideo = (req, res) => {
     const fileName = req.params.filename;
     const filePath = videoFileMap[fileName];
+    console.log(`Received request for video: ${fileName}`);
+
     if (!filePath) {
+        console.log('File not found:', fileName); 
         return res.status(404).send('File not found');
     }
 
