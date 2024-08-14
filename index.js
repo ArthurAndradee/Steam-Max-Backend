@@ -6,11 +6,10 @@ import movieRoutes from './routes/movieRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
 
 dotenv.config();
+connectDB();
 
 const app = express();
 const port = 5000;
-
-connectDB();
 
 app.use(cors());
 
