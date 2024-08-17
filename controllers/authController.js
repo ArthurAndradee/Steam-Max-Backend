@@ -1,75 +1,57 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    try {
-        // Check if user exists
-        const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email });
 
-        if (user && (await bcrypt.compare(password, user.password))) {
-            // Create JWT token
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-                expiresIn: '30d',  // Token expiration time
-            });
-
-            res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                token,
-            });
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.json({
+      _id: user._id,
+      email: user.email,
+      token,
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
-// @desc    Register a new user
-// @route   POST /auth/register
-// @access  Public
 export const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+  const { email, password } = req.body;
 
-    try {
-        // Check if user already exists
-        const userExists = await User.findOne({ email });
+  try {
+    const userExists = await User.findOne({ email });
 
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create new user
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-        });
-
-        if (user) {
-            // Create JWT token
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-                expiresIn: '30d',  // Token expiration time
-            });
-
-            res.status(201).json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                token,
-            });
-        } else {
-            res.status(400).json({ message: 'Invalid user data' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
     }
+
+    const user = await User.create({
+      email,
+      password,
+    });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.status(201).json({
+      _id: user._id,
+      email: user.email,
+      token,
+    });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
