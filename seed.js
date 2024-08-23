@@ -1,53 +1,53 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import User from './models/userModel.js';
+import User from './models/userModel.js'; // Adjust the path to your user model
 
-dotenv.config();
+dotenv.config(); // Load environment variables
 
-// Connect to MongoDB
+// Connect to the database
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => {
-  console.log('MongoDB Connected');
-})
-.catch((error) => {
-  console.error(`Error connecting to MongoDB: ${error.message}`);
-  process.exit(1);
-});
+  .then(() => console.log('Database connected successfully'))
+  .catch((error) => console.error('Database connection failed:', error));
 
 // Define mock users
 const mockUsers = [
   {
     email: 'user1@example.com',
-    password: 'password123', // In production, passwords should be hashed
+    password: 'password123', // Plain text password
+    watchlist: [], // Optional: Add initial watchlist data if desired
   },
   {
     email: 'user2@example.com',
-    password: 'password123',
+    password: 'password456',
+    watchlist: [],
   },
   {
     email: 'user3@example.com',
-    password: 'password123',
+    password: 'password789',
+    watchlist: [],
   },
+  // Add more users as needed
 ];
 
-// Seed the database with mock users
-const seedDatabase = async () => {
+// Function to seed the database with mock users
+const seedUsers = async () => {
   try {
-    // Delete existing users
+    // Clear the existing users in the collection (optional)
     await User.deleteMany({});
-    
-    // Insert mock users
+
+    // Insert mock users into the database
     await User.insertMany(mockUsers);
-    
-    console.log('Mock users seeded successfully');
-    process.exit();
+
+    console.log('Mock users inserted successfully');
   } catch (error) {
-    console.error(`Error seeding database: ${error.message}`);
-    process.exit(1);
+    console.error('Failed to insert mock users:', error);
+  } finally {
+    mongoose.connection.close();
   }
 };
 
-seedDatabase();
+// Run the seed function
+seedUsers();
