@@ -40,9 +40,8 @@ export const addToWatchlist = async (req, res) => {
     }
 
     profile.watchlist.push(movie);
+    
     await user.save();
-
-    res.status(200).json({ message: 'Movie added to watchlist', watchlist: profile.watchlist });
   } catch (error) {
     res.status(500).json({ message: 'Failed to add movie to watchlist', error: error.toString() });
   }
@@ -69,8 +68,6 @@ export const removeFromWatchlist = async (req, res) => {
     profile.watchlist = profile.watchlist.filter(movie => movie._id.toString() !== movieIdObj.toString());
 
     await user.save();
-
-    res.status(200).json({ message: 'Movie removed from watchlist', watchlist: profile.watchlist });
   } catch (error) {
     res.status(500).json({ message: 'Failed to remove movie from watchlist', error: error.toString() });
   }
