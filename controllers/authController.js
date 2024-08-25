@@ -18,6 +18,7 @@ export const loginUser = async (req, res) => {
     res.json({
       _id: user._id,
       email: user.email,
+      profiles: user.profiles,
       token,
     });
   } catch (error) {
@@ -26,32 +27,32 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+// export const registerUser = async (req, res) => {
+//   const { email, password } = req.body;
 
-  try {
-    const userExists = await User.findOne({ email });
+//   try {
+//     const userExists = await User.findOne({ email });
 
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
+//     if (userExists) {
+//       return res.status(400).json({ message: 'User already exists' });
+//     }
 
-    const user = await User.create({
-      email,
-      password,
-    });
+//     const user = await User.create({
+//       email,
+//       password,
+//     });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: '1h',
+//     });
 
-    res.status(201).json({
-      _id: user._id,
-      email: user.email,
-      token,
-    });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+//     res.status(201).json({
+//       _id: user._id,
+//       email: user.email,
+//       token,
+//     });
+//   } catch (error) {
+//     console.error('Register error:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };

@@ -1,14 +1,11 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-  email: {
+const profileSchema = new mongoose.Schema({
+  name: {
     type: String,
-    required: true,
-    unique: true,
   },
-  password: {
+  picture: {
     type: String,
-    required: true,
   },
   watchlist: [{
     title: String,
@@ -19,8 +16,12 @@ const userSchema = new mongoose.Schema({
     Rating: Number,
     description: String,
   }],
-}, {
-  timestamps: true,
+});
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  profiles: [profileSchema],
 });
 
 const User = mongoose.model('User', userSchema);
