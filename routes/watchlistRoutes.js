@@ -1,6 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/middleware.js';
-import { getWatchlist, addToWatchlist, removeFromWatchlist } from '../controllers/routesController.js';
+import { getWatchlist, addToWatchlist, removeFromWatchlist } from '../controllers/watchlistController.js';
 
 const router = express.Router();
 

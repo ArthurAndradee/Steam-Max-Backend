@@ -6,6 +6,7 @@ import movieRoutes from './routes/movieRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
 import authRoutes from './routes/authRoutes.js'
 import watchlistRoutes from './routes/watchlistRoutes.js';
+import profileRoutes from './routes/profileRoutes.js'
 
 dotenv.config();
 connectDB();
@@ -18,8 +19,9 @@ app.use(express.json());
 
 app.use('/movies', movieRoutes);
 app.use('/videos', videoRoutes);
-app.use('/auth', authRoutes);
+app.use('/auth', authRoutes)    
 app.use('/watchlist', watchlistRoutes)
+app.use('/profiles', profileRoutes)
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
