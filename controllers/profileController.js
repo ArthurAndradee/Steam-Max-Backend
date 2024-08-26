@@ -90,10 +90,46 @@ export const addProfile = async (req, res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    const { profileName } = req.params;
+    const { newName, newPicture } = req.body;
+
+    if (!profileName || !newName) {
+      return res.status(400).json({ message: 'Profile name and new name are required' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const profile = user.profiles.find(profile => profile.name === profileName);
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    profile.name = newName;
+    if (newPicture) {
+      profile.picture = newPicture;
+    }
+
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error', error: error.toString() });
+  }
+};
+
 export const deleteProfile = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { profileName } = req.params; // Get profileName from URL params
+    const { profileName } = req.params;
 
     if (!profileName) {
       return res.status(400).json({ message: 'Profile name is required' });
