@@ -89,3 +89,33 @@ export const addProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.toString() });
   }
 };
+
+export const deleteProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { profileName } = req.params; // Get profileName from URL params
+
+    if (!profileName) {
+      return res.status(400).json({ message: 'Profile name is required' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const profileIndex = user.profiles.findIndex(profile => profile.name === profileName);
+    if (profileIndex === -1) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    user.profiles.splice(profileIndex, 1);
+    await user.save();
+
+    res.json({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting profile:', error);
+    res.status(500).json({ message: 'Server error', error: error.toString() });
+  }
+};
