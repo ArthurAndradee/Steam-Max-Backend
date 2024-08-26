@@ -1,10 +1,11 @@
 import express from 'express';
 import authMiddleware from '../middleware/middleware.js';
-import User from '../models/userModel.js';
-import { getProfile } from '../controllers/profileController.js';
+import { addProfile, getProfile, getProfiles, upload } from '../controllers/profileController.js';
 
 const router = express.Router();
 
 router.get('/', authMiddleware, getProfile);
+router.get('/get', authMiddleware, getProfiles);
+router.post('/upload', authMiddleware ,upload.single('picture'), addProfile);
 
 export default router;
