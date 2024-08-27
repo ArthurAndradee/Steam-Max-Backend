@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', authMiddleware, getProfile); 
 router.get('/get', authMiddleware, getProfiles);
 router.post('/upload', authMiddleware ,upload.single('picture'), addProfile);
-router.put('/update/:profileName', authMiddleware, updateProfile);
+router.put('/update/:profileName', upload.single('picture'),authMiddleware, updateProfile);
 router.delete('/delete/:profileName', authMiddleware, deleteProfile)
 
 export default router;

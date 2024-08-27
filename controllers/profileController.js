@@ -50,15 +50,7 @@ export const getProfiles = async (req, res) => {
   }
 };
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, uuidv4() + '-' + file.originalname);
-  },
-});
-
+const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
 export const addProfile = async (req, res) => {
@@ -71,6 +63,9 @@ export const addProfile = async (req, res) => {
       return res.status(400).json({ message: 'Name and picture are required' });
     }
 
+    // Convert the image file buffer to a base64 string
+    const base64Image = `data:${profilePicture.mimetype};base64,${profilePicture.buffer.toString('base64')}`;
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -78,7 +73,7 @@ export const addProfile = async (req, res) => {
 
     user.profiles.push({
       name: name,
-      picture: profilePicture.path, 
+      picture: base64Image, 
     });
 
     await user.save();
@@ -92,7 +87,7 @@ export const addProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user._id; 
+    const userId = req.user._id;
     const { profileName } = req.params;
     const { newName, newPicture } = req.body;
 
@@ -113,18 +108,17 @@ export const updateProfile = async (req, res) => {
     }
 
     profile.name = newName;
-    if (newPicture) {
-      profile.picture = newPicture;
-    }
+    profile.picture = newPicture;
 
     await user.save();
 
-    res.json({ message: 'Profile updated successfully' });
+    res.json({ name: profile.name, picture: profile.picture });
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Server error', error: error.toString() });
   }
 };
+
 
 export const deleteProfile = async (req, res) => {
   try {
