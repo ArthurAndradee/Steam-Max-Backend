@@ -1,6 +1,5 @@
 import User from '../models/userModel.js';
 import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
 
 export const getProfile = async (req, res) => {
   try {
@@ -51,7 +50,12 @@ export const getProfiles = async (req, res) => {
 };
 
 const storage = multer.memoryStorage();
-export const upload = multer({ storage: storage });
+export const upload = multer({
+  storage: storage,
+  limits: {
+    fieldSize: 10 * 1024 * 1024 
+  }
+});
 
 export const addProfile = async (req, res) => {
   try {
@@ -63,7 +67,6 @@ export const addProfile = async (req, res) => {
       return res.status(400).json({ message: 'Name and picture are required' });
     }
 
-    // Convert the image file buffer to a base64 string
     const base64Image = `data:${profilePicture.mimetype};base64,${profilePicture.buffer.toString('base64')}`;
 
     const user = await User.findById(userId);
